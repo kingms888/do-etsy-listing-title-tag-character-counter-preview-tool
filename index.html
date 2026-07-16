@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>Etsy Listing Title & Tag Character Counter & Preview Tool | Etsy SEO Tools</title>
+  <meta name="description" content="Real‑time Etsy listing title character counter, tag slot checker, and mobile preview. Free SEO tool for Etsy sellers – count chars, validate tags, preview listings.">
+  <meta name="keywords" content="etsy listing title character counter, etsy seo tools, csv json validator, developer regex tester, etsy sellers, developer tools, csv/json tools, etsy listing title & tag character counter & preview tool">
+  <meta name="author" content="Etsy Seller Toolbox">
+  <meta name="robots" content="index, follow">
+  <!-- Open Graph -->
+  <meta property="og:title" content="Etsy Listing Title & Tag Character Counter & Preview Tool">
+  <meta property="og:description" content="Real‑time character limits, tag slot checker, and mobile preview for Etsy sellers.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://etsytoolbox.example.com">
+  <meta name="twitter:card" content="summary_large_image">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #f7f9fc;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #1e2a3a;
+      line-height: 1.5;
+      padding: 1rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      width: 100%;
+      flex: 1;
+    }
+    /* header */
+    .tool-header {
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid #dce1e8;
+      padding-bottom: 0.75rem;
+    }
+    .tool-header h1 {
+      font-size: 1.9rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: #0f1a2c;
+    }
+    .tool-header p {
+      color: #3b4a5c;
+      font-size: 1rem;
+      margin-top: 0.25rem;
+    }
+    /* ad placeholder */
+    .ad-placeholder {
+      background: #eef2f6;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.8rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px dashed #b8c5d4;
+      color: #2c3e50;
+      font-size: 0.95rem;
+    }
+    .ad-placeholder span {
+      font-weight: 500;
+    }
+    .ad-placeholder .badge {
+      background: #d4dee9;
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      color: #1f2b3a;
+    }
+    /* main grid */
+    .tool-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.8rem;
+    }
+    @media (min-width: 700px) {
+      .tool-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    /* cards */
+    .card {
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.03), 0 2px 6px rgba(0, 20, 30, 0.05);
+      padding: 1.5rem 1.3rem;
+      border: 1px solid #e9edf2;
+      transition: box-shadow 0.15s;
+    }
+    .card h2 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .card h2 small {
+      font-weight: 400;
+      font-size: 0.8rem;
+      color: #5b6f84;
+      margin-left: auto;
+    }
+    label {
+      display: block;
+      font-weight: 500;
+      margin: 0.9rem 0 0.3rem;
+      font-size: 0.9rem;
+      color: #1f2e42;
+    }
+    textarea, input[type="text"] {
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+      border: 1px solid #cfd9e3;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-family: inherit;
+      background: #fafcff;
+      transition: 0.2s;
+      resize: vertical;
+    }
+    textarea:focus, input[type="text"]:focus {
+      outline: 2px solid #1e6f9f;
+      border-color: transparent;
+      background: #ffffff;
+    }
+    .char-counter {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      margin-top: 0.4rem;
+      color: #2c3e50;
+    }
+    .char-counter .limit-ok {
+      color: #1f7b4d;
+    }
+    .char-counter .limit-exceed {
+      color: #b13e3e;
+      font-weight: 600;
+    }
+    .tag-slots {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.6rem;
+    }
+    .tag-slot {
+      background: #eef2f8;
+      border-radius: 30px;
+      padding: 0.25rem 0.9rem 0.25rem 1rem;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      border: 1px solid #d1dce8;
+    }
+    .tag-slot .slot-index {
+      font-weight: 600;
+      color: #1f5e8a;
+      margin-right: 0.2rem;
+    }
+    .tag-slot .slot-char {
+      background: #dce5f0;
+      border-radius: 20px;
+      padding: 0 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: #1a3149;
+    }
+    .tag-slot.warning {
+      background: #fff1e0;
+      border-color: #d99f6b;
+    }
+    .tag-slot.exceed {
+      background: #ffe6e6;
+      border-color: #c75a5a;
+    }
+    .preview-box {
+      background: #f4f7fb;
+      border-radius: 18px;
+      padding: 1rem 1.2rem;
+      margin-top: 1rem;
+      border: 1px solid #dce5ef;
+    }
+    .preview-title {
+      font-size: 1.25rem;
+      font-weight: 500;
+      line-height: 1.3;
+      word-break: break-word;
+    }
+    .preview-tags {
+      margin-top: 0.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .preview-tag {
+      background: #dee7f2;
+      padding: 0.15rem 0.8rem;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      color: #1f3a57;
+    }
+    .mobile-frame {
+      max-width: 320px;
+      margin: 1rem auto 0;
+      border: 1px solid #cbd5e2;
+      border-radius: 28px;
+      padding: 1rem 0.8rem 1.2rem;
+      background: white;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.02);
+    }
+    .mobile-frame .preview-title {
+      font-size: 1.1rem;
+    }
+    .meta-note {
+      font-size: 0.75rem;
+      color: #5d738b;
+      margin-top: 0.6rem;
+      border-top: 1px solid #e2e9f1;
+      padding-top: 0.6rem;
+    }
+    .resource-section {
+      margin: 2.5rem 0 1.2rem;
+      background: #f0f4fa;
+      border-radius: 24px;
+      padding: 1.2rem 1.5rem;
+      border: 1px solid #dce4ee;
+    }
+    .resource-section h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .resource-section ul {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem 1.5rem;
+    }
+    .resource-section li a {
+      text-decoration: none;
+      color: #1f6390;
+      font-weight: 500;
+      border-bottom: 1px solid transparent;
+    }
+    .resource-section li a:hover {
+      border-bottom-color: #1f6390;
+    }
+    .privacy-note {
+      background: #e9eef5;
+      border-radius: 40px;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.8rem;
+      color: #1f3349;
+      margin-top: 2rem;
+      display: inline-block;
+      border: 1px solid #d3deec;
+    }
+    .footer-meta {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.5rem;
+    }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid #b7c8db;
+      padding: 0.3rem 1rem;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      cursor: default;
+      color: #2c4b6e;
+    }
+    .separator {
+      margin: 0 0.3rem;
+    }
+    .flex-between {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .small-hint {
+      font-size: 0.75rem;
+      color: #4b627c;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header class="tool-header">
+    <h1>✎ Etsy Title & Tag Counter</h1>
+    <p>Real‑time character limits · tag slot checker · mobile preview</p>
+  </header>
+
+  <!-- Ad placeholder (visible) -->
+  <div class="ad-placeholder" aria-label="advertisement placeholder">
+    <span>📌 <strong>Etsy Seller Toolbox</strong> – Ad space (your brand here)</span>
+    <span class="badge">sponsored</span>
+  </div>
+
+  <!-- Main tool grid -->
+  <div class="tool-grid">
+    <!-- LEFT: Title & Tags input -->
+    <div class="card">
+      <h2>📝 Listing details <small>Etsy limits</small></h2>
+
+      <label for="titleInput">Title <span style="font-weight:400;">(max 140 chars)</span></label>
+      <textarea id="titleInput" rows="2" maxlength="200" placeholder="Handmade ceramic mug, personalized gift, coffee cup, …">Vintage leather journal – handmade sketchbook, personalized gift for writers, artists</textarea>
+      <div class="char-counter" id="titleCounter">
+        <span id="titleCount">0</span>
+        <span id="titleLimit">/ 140</span>
+      </div>
+
+      <label for="tagsInput">Tags <span style="font-weight:400;">(max 13 slots, each ≤ 20 chars)</span></label>
+      <textarea id="tagsInput" rows="3" placeholder="Enter tags separated by comma or new line">leather journal, sketchbook, personalized gift, vintage, handmade, writer gift, A6 notebook, art supply, travel journal, leather cover, unique gift, craft paper, rustic</textarea>
+      <div class="char-counter" id="tagCounter">
+        <span id="tagCount">0 tags</span>
+        <span id="tagWarnings"></span>
+      </div>
+
+      <!-- dynamic tag slots -->
+      <div id="tagSlotsContainer" class="tag-slots"></div>
+      <div class="small-hint" style="margin-top:0.5rem;">⚡ slots show character count / 20</div>
+    </div>
+
+    <!-- RIGHT: Preview + mobile -->
+    <div class="card">
+      <h2>👁️ Preview <small>mobile & desktop</small></h2>
+      <div class="preview-box">
+        <div class="preview-title" id="previewTitle">Vintage leather journal – handmade sketchbook, personalized gift for writers, artists</div>
+        <div class="preview-tags" id="previewTags"></div>
+      </div>
+      <!-- mobile preview -->
+      <div class="mobile-frame">
+        <div style="display:flex; gap:0.3rem; align-items:center; margin-bottom:0.5rem; color:#3d5a78; font-size:0.7rem;">
+          <span>📱 Etsy app preview</span>
+        </div>
+        <div class="preview-title" id="mobilePreviewTitle" style="font-size:1.05rem;">Vintage leather journal – handmade sketchbook, personalized gift for writers, artists</div>
+        <div class="preview-tags" id="mobilePreviewTags" style="margin-top:0.4rem;"></div>
+        <div class="meta-note">* approximate mobile layout</div>
+      </div>
+      <div style="margin-top:0.8rem; font-size:0.8rem; background:#f2f6fc; border-radius:30px; padding:0.2rem 1rem; display:inline-block;">🔍 tag slot checker active</div>
+    </div>
+  </div>
+
+  <!-- Resource / affiliate section -->
+  <div class="resource-section">
+    <h3>🔗 Etsy seller resources & tools</h3>
+    <ul>
+      <li><a href="#" target="_blank" rel="noopener">Etsy SEO guide (affiliate)</a></li>
+      <li><a href="#" target="_blank" rel="noopener">CSV / JSON validator</a></li>
+      <li><a href="#" target="_blank" rel="noopener">Regex tester for developers</a></li>
+      <li><a href="#" target="_blank" rel="noopener">Tag generator pro</a></li>
+      <li><a href="#" target="_blank" rel="noopener">Etsy rank tracker</a></li>
+    </ul>
+    <p style="font-size:0.75rem; margin-top:0.4rem; color:#3d5a78;">⚡ Some links are affiliate – we may earn a small commission.</p>
+  </div>
+
+  <!-- Privacy note + metrics -->
+  <div class="footer-meta">
+    <div class="privacy-note">
+      🔒 <strong>Privacy:</strong> Anonymous events may be counted for product improvement. No personal data collected.
+    </div>
+    <div>
+      <span class="btn-ghost">📊 v1.0 · etsy tool</span>
+    </div>
+  </div>
+  <p style="font-size:0.7rem; margin-top:0.3rem; color:#4b627c;">Report events anonymously via <code>window.ORGANISM_METRICS_ENDPOINT</code> (if configured).</p>
+</div>
+
+<script>
+  (function() {
+    // DOM refs
+    const titleInput = document.getElementById('titleInput');
+    const tagsInput = document.getElementById('tagsInput');
+    const titleCountSpan = document.getElementById('titleCount');
+    const titleLimitSpan = document.getElementById('titleLimit');
+    const tagCountSpan = document.getElementById('tagCount');
+    const tagWarningsSpan = document.getElementById('tagWarnings');
+    const tagSlotsContainer = document.getElementById('tagSlotsContainer');
+    const previewTitle = document.getElementById('previewTitle');
+    const previewTags = document.getElementById('previewTags');
+    const mobilePreviewTitle = document.getElementById('mobilePreviewTitle');
+    const mobilePreviewTags = document.getElementById('mobilePreviewTags');
+
+    // Constants
+    const TITLE_MAX = 140;
+    const TAG_MAX_LENGTH = 20;
+    const MAX_TAG_SLOTS = 13;
+
+    // Helper: parse tags from textarea (split by comma, newline, semicolon)
+    function parseTags(raw) {
+      return raw.split(/[\n,;]+/).map(s => s.trim()).filter(t => t.length > 0);
+    }
+
+    // Update everything
+    function updateTool() {
+      // 1. Title
+      const titleRaw = titleInput.value;
+      const titleLen = titleRaw.length;
+      titleCountSpan.textContent = titleLen;
+      titleLimitSpan.textContent = `/ ${TITLE_MAX}`;
+      if (titleLen > TITLE_MAX) {
+        titleCountSpan.style.color = '#b13e3e';
+        titleCountSpan.style.fontWeight = '600';
+      } else {
+        titleCountSpan.style.color = '#1f7b4d';
+        titleCountSpan.style.fontWeight = '500';
+      }
+
+      // 2. Tags parsing
+      const tagsRaw = tagsInput.value;
+      const tags = parseTags(tagsRaw);
+      const tagCount = tags.length;
+      tagCountSpan.textContent = `${tagCount} tag${tagCount !== 1 ? 's' : ''}`;
+
+      // 3. Build tag slots & warnings
+      let warnMessages = [];
+      let slotsHtml = '';
+      const maxDisplay = Math.min(tagCount, MAX_TAG_SLOTS);
+      for (let i = 0; i < maxDisplay; i++) {
+        const tag = tags[i];
+        const len = tag.length;
+        let slotClass = 'tag-slot';
+        let extra = '';
+        if (len > TAG_MAX_LENGTH) {
+          slotClass += ' exceed';
+          extra = `⚠️ ${len}`;
+        } else if (len === TAG_MAX_LENGTH) {
+          slotClass += ' warning';
+          extra = `${len} max`;
+        } else {
+          extra = `${len}`;
+        }
+        slotsHtml += `<span class="${slotClass}"><span class="slot-index">#${i+1}</span> ${escapeHtml(tag)} <span class="slot-char">${extra}</span></span>`;
+      }
+      if (tagCount > MAX_TAG_SLOTS) {
+        slotsHtml += `<span class="tag-slot warning" style="background:#f5e9db;">+${tagCount - MAX_TAG_SLOTS} more (max 13)</span>`;
+      }
+      tagSlotsContainer.innerHTML = slotsHtml;
+
+      // warnings
+      let overLimitCount = 0;
+      let emptySlots = 0;
+      for (let i = 0; i < tagCount; i++) {
+        if (tags[i].length > TAG_MAX_LENGTH) overLimitCount++;
+      }
+      if (tagCount > MAX_TAG_SLOTS) {
+        warnMessages.push(`⚠️ ${tagCount} tags used (max 13)`);
+      }
+      if (overLimitCount > 0) {
+        warnMessages.push(`⚠️ ${overLimitCount} tag(s) exceed 20 chars`);
+      }
+      if (tagCount === 0) {
+        warnMessages.push('Add at least one tag');
+      }
+      tagWarningsSpan.textContent = warnMessages.join(' · ');
+
+      // 4. Preview update (desktop & mobile)
+      const titleDisplay = titleRaw.length > 0 ? titleRaw : '[Your listing title]';
+      previewTitle.textContent = titleDisplay;
+      mobilePreviewTitle.textContent = titleDisplay;
+
+      // tags preview (max 13)
+      const displayTags = tags.slice(0, MAX_TAG_SLOTS);
+      const previewTagsHtml = displayTags.map(t => `<span class="preview-tag">${escapeHtml(t)}</span>`).join('');
+      previewTags.innerHTML = previewTagsHtml;
+      mobilePreviewTags.innerHTML = previewTagsHtml;
+
+      // Report event (anonymized) if endpoint configured
+      reportEvent('tool_update', {
+        titleLength: titleLen,
+        tagCount: tagCount,
+        overLimitTags: overLimitCount,
+        slotsUsed: Math.min(tagCount, MAX_TAG_SLOTS)
+      });
+    }
+
+    // Simple escape
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // reportEvent function (global)
+    window.reportEvent = function(name, payload) {
+      if (typeof window.ORGANISM_METRICS_ENDPOINT === 'string' && window.ORGANISM_METRICS_ENDPOINT.length > 5) {
+        try {
+          const body = JSON.stringify({ event: name, payload: payload, timestamp: Date.now() });
+          if (navigator.sendBeacon) {
+            navigator.sendBeacon(window.ORGANISM_METRICS_ENDPOINT, body);
+          } else {
+            fetch(window.ORGANISM_METRICS_ENDPOINT, {
+              method: 'POST',
+              body: body,
+              keepalive: true,
+              headers: { 'Content-Type': 'application/json' }
+            }).catch(() => {});
+          }
+        } catch (e) { /* silent */ }
+      }
+    };
+
+    // initial update
+    updateTool();
+
+    // event listeners
+    titleInput.addEventListener('input', updateTool);
+    tagsInput.addEventListener('input', updateTool);
+
+    // also report a 'page_view' on load
+    window.addEventListener('load', function() {
+      reportEvent('page_view', { tool: 'etsy_title_tag_counter' });
+    });
+
+    // expose for debugging
+    window.__updateTool = updateTool;
+  })();
+</script>
+
+<!-- ensure endpoint placeholder is defined (not set, so no call) -->
+<script>
+  // window.ORGANISM_METRICS_ENDPOINT = 'https://example.com/metrics'; // uncomment to enable
+</script>
+
+<section data-organism-discovery="hub" style="margin:32px auto 20px;max-width:1040px;padding:16px;border-top:1px solid #d9e2ec;color:#475569;font:14px/1.5 system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+  <strong style="display:block;color:#0f172a;margin-bottom:6px">More free browser tools</strong>
+  <p style="margin:0 0 8px">This page is part of an autonomous micro-tool network. Explore the live tool directory and related utilities.</p>
+  <p style="margin:0"><a href="https://kingms888.github.io/do-digital-organism-index/" style="color:#0f766e;font-weight:700">Open the tool directory</a> </p>
+</section>
+</body>
+</html>
